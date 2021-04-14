@@ -16,14 +16,26 @@ for category in categorys_data:
     data = json.loads(r.text)
     # code = str(code)
     f = open(f'{category_code_name[code]}.json', 'a', encoding='utf-8')
+    f.write("{"f'"Название акции":"{category_code_name[code]}"'"}"
+             "\n{"f'"Код акции":"{code}"'"}\n\n")
     if data['results'] == []:
-        f.write("Нет товаров в рамках данной акции")
+        f.write("{"f'"Товары":"Нет товаров в рамках данной акции"'"}")
     else:
+        f.write("\n{"f'"Товары":')
         for info_product in data['results']:
-            f.write(f'\nНазвание товара: {info_product["name"]}'
-                    f'\n      ID товара: {info_product["id"]}        '
-                    f'\n      Стоимость товара без акции: {info_product["current_prices"]["price_reg__min"]}₽'
-                    f'\n      Стоимость товара по акции: {info_product["current_prices"]["price_promo__min"]}₽'
-                    f'\n      Дата начала акции: {info_product["promo"]["date_begin"]}'
-                    f'\n      Дата окончания акции: {info_product["promo"]["date_end"]}'
-                    f'\n________________________________________________________________________________________')
+
+            f.write(
+                    "["
+                    "\n     {"f'"Название товара": "{info_product["name"]}"'"},"
+                    "\n     {"f'"ID товара": "{info_product["id"]}"'"},"
+                    "\n     {"f'"Стоимость товара без акции": "{info_product["current_prices"]["price_reg__min"]}₽"'"},"
+                    "\n     {"f'"Стоимость товара по акции": "{info_product["current_prices"]["price_promo__min"]}₽"'"},"
+                    "\n     {"f'"Дата начала акции": "{info_product["promo"]["date_begin"]}"'"},"
+                    "\n     {"f'"Дата окончания акции": "{info_product["promo"]["date_end"]}"'"}"
+                    "\n]"
+                   )
+            if len(data['results'])-1 != (data['results']).index(info_product):
+                f.write(",\n\n")
+        f.write("\n}")
+        f.close()
+
