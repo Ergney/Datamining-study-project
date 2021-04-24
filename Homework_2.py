@@ -39,37 +39,37 @@ class ParseMagnit:
                 try:
                     name_promotion = product.find('div', attrs={'class': 'card-sale__header'}).text
                 except AttributeError:
-                    name_promotion = 'Not data'
+                    name_promotion = None
                 try:
                     sale = product.find('div', attrs={'class': 'label'}).text.split()[0]
                 except AttributeError:
-                    sale = 'Not data'
+                    sale = None
                 try:
                     picture = product.picture.find('img')['data-src']
                 except AttributeError:
-                    picture = 'Not data'
+                    picture = None
                 try:
-                    promotion_price = '.'.join(
-                        product.find('div', attrs={'class': 'label__price label__price_old'}).text.split())
-                    not_promotion_price = '.'.join(
-                        product.find('div', attrs={'class': 'label__price_new'}).text.split())
+                    promotion_price = float('.'.join(
+                        product.find('div', attrs={'class': 'label__price label__price_old'}).text.split()))
+                    not_promotion_price = float('.'.join(
+                        product.find('div', attrs={'class': 'label__price_new'}).text.split()))
                 except AttributeError:
-                    promotion_price = 'Not data'
-                    not_promotion_price = 'Not data'
+                    promotion_price = None
+                    not_promotion_price = None
                 try:
                     name_product = product.find('div', attrs={'class': 'card-sale__title'}).text
                 except AttributeError:
-                    name_product = 'Not data'
+                    name_product = None
                 try:
                     date = str(product.find('div', attrs={'class': 'card-sale__date'}).text).split()
                     start_promotion = f'{date[1]} {date[2]}'
                     end_promotion = f'{date[4]} {date[5]}'
                 except AttributeError:
-                    start_promotion = "Not data"
-                    end_promotion = "Not data"
+                    start_promotion = None
+                    end_promotion = None
                 except IndexError:
-                    start_promotion = "Not data"
-                    end_promotion = "Not data"
+                    start_promotion = None
+                    end_promotion = None
 
                 tovar = {
                     'url': url,
