@@ -1,5 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
 import typing
 from urllib.parse import urljoin
 import requests
@@ -40,6 +38,21 @@ def parce(url_list):
         soup = BeautifulSoup(response, 'lxml')
         date_time = soup.find('time')['datetime']
         dt = [int(datetime_values) for datetime_values in date_time[0:10].split("-") + date_time[11:16].split(":")]
+        comment_id = soup.comments["commentable-id"]
+        comments_requests = requests.get(
+            f"https://gb.ru/api/v2/comments?commentable_type=Post&commentable_id={comment_id}&order=desc",
+            headers=headers)
+        comments_json = comments_requests.json()
+        comments = []
+        for comment in comments_json:
+            comment_data = {"com": {
+                "author_comment_id": comment['comment']["user"]['id'],
+                "author_name": comment['comment']["user"]['full_name'],
+                "author_url": comment['comment']["user"]['url'],
+                "likes": comment['comment']['likes_count'],
+                "body": comment['comment']['body']}}
+            comments.append(comment_data)
+
         data = {
             'post_data': {
                 'url': url,
@@ -58,7 +71,8 @@ def parce(url_list):
             },
             'tags_data':
                 [{'url': urljoin(url, tag.attrs.get('href')), 'name': tag.text} for tag in
-                 soup.find_all('a', attrs={'class': 'small'})]
+                 soup.find_all('a', attrs={'class': 'small'})],
+            "comments": comments
 
         }
         db.create_post(data)
@@ -66,5 +80,5 @@ def parce(url_list):
 
 url_list = set(url_list)
 
-db = Database("sqlite:///gb_blog.db")
+db = Database("sqlite:///gb_blog.db", counter)
 parce(url_list)

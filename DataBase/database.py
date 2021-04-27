@@ -15,10 +15,11 @@ def _get_or_create(session, model, uniqe_field, data):
 class Database:
     counter = 0
 
-    def __init__(self, db_url):
+    def __init__(self, db_url, progress_bar):
         engine = create_engine(db_url)
         models.Base.metadata.create_all(bind=engine)
         self.maker = sessionmaker(bind=engine)
+        self.progress_bar = progress_bar
 
     def create_post(self, data):
         session = self.maker()
@@ -37,6 +38,6 @@ class Database:
             session.rollback()
         finally:
             self.counter += 1
-            print(f"entry#{self.counter}")
+            print(f"{self.counter}/{self.progress_bar}")
             session.close()
 
